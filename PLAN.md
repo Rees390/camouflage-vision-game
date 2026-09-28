@@ -2,201 +2,189 @@
 
 ## 1. Project Goal
 
-Build a university Computer Graphics web application that lets users explore how camouflage works in 3D scenes. The game will show hidden animals under different environments, lighting conditions, textures, contrast levels, and simulated color vision modes.
+Build a small university Computer Graphics web application that demonstrates how lighting, contrast, texture, camouflage, and simulated color vision deficiencies affect the ability to find a hidden animal.
 
-The goal is educational rather than medical: users should learn that visibility depends on more than color alone, including shape, brightness, texture, lighting direction, shadows, and background complexity.
+The central computer graphics goal is to make these effects directly observable: changing the lighting or color display must visibly alter the scene and the visibility of the camouflaged animal. Scene construction, lighting, shadows, and color are the core graphics elements of the project. Clicking the animal provides an interactive way to test how those visual changes affect the user's ability to find it.
+
+The project must be ready for demonstration by tomorrow night. The priority is a complete, stable educational experience rather than detailed models or a large amount of content. The simulation is educational and approximate, not medical or diagnostic.
 
 ## 2. Minimum Viable Version
 
-The first manageable version should include:
+The required one-day version includes:
 
-- One playable challenge scene, preferably forest.
-- One hidden animal model placed in the scene.
-- A timer, score, and click-to-find interaction.
-- Basic lighting controls for brightness and light direction.
-- Vision modes: normal vision, grayscale, and one color vision deficiency simulation.
-- A simple results screen showing time, score, and selected vision mode.
-- A short Learn section with a scientific disclaimer.
+- A simple home screen with a start button and access to the Learn section.
+- One playable low-poly forest scene built directly with React Three Fiber primitives.
+- One hidden animal represented by a simple recognizable model or grouped geometry.
+- Click detection, a timer, incorrect-click tracking, and a score.
+- A compact Vision Lab integrated into the challenge screen.
+- Normal, protanopia, deuteranopia, tritanopia, and grayscale modes using approximate color transforms.
+- Simple lighting controls for brightness and direction.
+- A results screen with time, score, and incorrect clicks.
+- A short Learn section and scientific disclaimer.
+- A successful production build.
 
-After the MVP works, add desert and grassland scenes, more animals, and the remaining vision modes.
+Desert and grassland should be lightweight variations of the same scene system only if the core forest experience is complete. Blender-generated GLB assets are stretch work and are not required for the first demonstration.
 
 ## 3. Proposed Folder Structure
 
 ```text
 camouflage-vision-game/
-  public/
-    models/
-      forest/
-      desert/
-      grassland/
+  web-app/
+    public/
+      models/                 # Optional GLB files if time permits
+    src/
+      components/
+      game/
+      scenes/
+      shaders/
+      styles/
+      App.tsx
+      main.tsx
+    package.json
+    vite.config.ts
   scripts/
-    blender/
-      create_forest_scene.py
-      create_desert_scene.py
-      create_grassland_scene.py
-      export_glb.py
-  src/
-    components/
-    data/
-    game/
-    shaders/
-    scenes/
-    styles/
-    App.tsx
-    main.tsx
+    blender/                  # Stretch goal only
   PLAN.md
-  package.json
-  vite.config.ts
 ```
 
-This is the planned structure only. The folders and application files should be created later when development starts.
+Create only the folders needed during implementation. Keep most small components together until splitting them makes the code clearer.
 
 ## 4. React Components
 
-Planned components:
+Keep the component set small:
 
-- `App`: top-level routing or screen state.
-- `HomeScreen`: title, start button, and navigation to Learn or Vision Lab.
-- `ChallengeScreen`: main game screen with the 3D canvas, timer, score, and controls.
-- `VisionLab`: free exploration mode for switching vision filters and lighting without scoring.
-- `ResultsScreen`: final score, time, accuracy, and replay options.
-- `LearnSection`: short explanations of camouflage, lighting, contrast, and color vision simulation limits.
-- `SceneCanvas`: React Three Fiber canvas wrapper.
-- `LightingControls`: brightness, direction, and environment controls.
-- `VisionModeSelector`: normal, protanopia, deuteranopia, tritanopia, and grayscale.
-- `ScorePanel`: timer, clicks, found animals, and score.
-- `SceneSelector`: forest, desert, and grassland selection.
+- `App`: controls the current screen and shared game results.
+- `HomeScreen`: project title, start action, and Learn access.
+- `ChallengeScreen`: contains the 3D canvas, controls, timer, and score.
+- `SceneCanvas`: renders the environment and hidden animal.
+- `VisionModeSelector`: switches among the five required vision modes.
+- `LightingControls`: adjusts light brightness and direction.
+- `ResultsScreen`: displays score, time, misses, and replay action.
+- `LearnSection`: explains camouflage concepts and the simulation limitation.
+
+Use simple React state instead of adding a router or state-management library.
 
 ## 5. Blender Scripts and Exported Models
 
-Blender Python scripts using `bpy` should generate simple low-poly educational scenes and export them as GLB files.
+Blender work is a stretch goal for this deadline. The playable version should use low-poly geometry created directly in React Three Fiber so that gameplay does not depend on an asset pipeline.
 
-Initial Blender script goals:
-
-- Create a forest scene with ground, trees, rocks, leaves, and one camouflaged animal.
-- Create a desert scene with sand, stones, sparse plants, and one camouflaged animal.
-- Create a grassland scene with grass clumps, terrain, and one camouflaged animal.
-- Use simple geometry and procedural materials first.
-- Export GLB models for use in Three.js.
-
-The first version should keep models simple: low-poly animal silhouettes, simple materials, and clear object names for click detection.
+If the complete app is stable early, create only one Blender Python script using `bpy` to generate and export a simple animal or forest prop as GLB. Do not attempt three complete Blender scenes before the deadline. The app must continue to work with primitive geometry if GLB loading fails.
 
 ## 6. Color Vision Shader Approach
 
-Use a post-processing shader or material color transform to approximate color vision modes.
+Use one lightweight full-scene color effect with matrix-based RGB transforms for:
 
-Planned modes:
+- Normal vision.
+- Protanopia simulation.
+- Deuteranopia simulation.
+- Tritanopia simulation.
+- Grayscale.
 
-- Normal vision: no color transform.
-- Protanopia simulation: approximate reduced red perception.
-- Deuteranopia simulation: approximate reduced green perception.
-- Tritanopia simulation: approximate reduced blue-yellow perception.
-- Grayscale: luminance-based conversion.
-
-The shader should use matrix-based RGB transforms for performance and simplicity. The UI must include a disclaimer that these are approximate educational simulations, not clinical or diagnostic tools.
+Prefer a small custom post-processing shader if it can be integrated quickly. The fallback is a CSS or canvas-level visual filter for the demonstration. Label every deficiency mode as an approximate educational simulation and include a visible disclaimer in the Learn section.
 
 ## 7. Lighting System
 
-The lighting system should start simple and interactive:
+Use a simple lighting setup:
 
-- Ambient light intensity slider.
-- Directional light intensity slider.
-- Directional light position or angle control.
-- Optional shadows after the basic scene is stable.
-- Optional time-of-day presets later.
+- One ambient light.
+- One directional light.
+- One brightness control.
+- One direction control, or a few tested direction presets if a continuous control takes too long.
+- Shadows only if performance remains stable.
 
-Lighting should affect gameplay because changes in brightness, contrast, and shadows can make camouflaged animals easier or harder to find.
+Lighting changes must visibly affect the contrast between the animal and its surroundings.
 
 ## 8. Animal Click-Detection Approach
 
-Use React Three Fiber pointer events or Three.js raycasting to detect clicks on animal meshes.
+Use React Three Fiber pointer events on the hidden animal group. Stop event propagation on a correct click, mark the animal as found, stop the timer, and open the results screen.
 
-Recommended approach:
-
-- Give animal meshes clear names such as `animal_hidden_fox` or `target_lizard`.
-- Store target metadata in scene data.
-- On click, check whether the clicked mesh or one of its parents is a target animal.
-- If correct, mark the animal as found, update score, and give visual feedback.
-- If incorrect, count the click as a miss or apply a small score penalty.
-
-For the MVP, use one target animal per scene. Add multiple animals only after the full loop works.
+Use a larger invisible hitbox if the visible animal is difficult to click. Treat clicks on the scene background as misses. Only one target is required per round.
 
 ## 9. Scoring and Results
 
-Suggested scoring model:
+Use a transparent scoring rule that is easy to test:
 
-- Start from a base score per animal.
-- Award faster discoveries with a time bonus.
-- Subtract a small penalty for incorrect clicks.
-- Track selected scene, vision mode, lighting settings, time, clicks, and found targets.
+- Start at 1,000 points.
+- Subtract points for elapsed time.
+- Subtract a fixed penalty for each incorrect click.
+- Never allow a negative final score.
 
-The Results screen should show:
-
-- Final score.
-- Completion time.
-- Number of correct finds.
-- Number of incorrect clicks.
-- Scene and vision mode used.
-- A short educational note about why the animal may have been difficult to detect.
+The results screen should show final score, completion time, incorrect clicks, selected vision mode, and a short educational observation. Store results only in React state; persistence and accounts are outside the deadline scope.
 
 ## 10. Development Phases in the Correct Order
 
-1. Create the React, TypeScript, and Vite app.
-2. Add Three.js and React Three Fiber.
-3. Build the basic screen flow: Home, Challenge, Results, Learn.
-4. Create a placeholder 3D scene directly in React Three Fiber.
-5. Implement timer, score state, and click detection on a simple placeholder animal.
-6. Add basic lighting controls.
-7. Add grayscale and one color vision shader mode.
-8. Create the first Blender Python script for the forest scene.
-9. Export the first GLB model and load it in the app.
-10. Replace placeholder geometry with the forest GLB.
-11. Add the scientific disclaimer and Learn content.
-12. Add desert and grassland Blender scripts and GLB exports.
-13. Add protanopia, deuteranopia, and tritanopia modes.
-14. Polish UI, scoring, results, and scene selection.
-15. Test on desktop and smaller screens.
+### Today
+
+1. Commit the untouched Vite application as a baseline.
+2. Install only Three.js, React Three Fiber, and any required TypeScript typings.
+3. Replace the Vite demo with the basic Home, Challenge, Results, and Learn screen flow.
+4. Build one forest scene from low-poly primitives.
+5. Add one hidden animal, click detection, misses, timer, and scoring.
+6. Add the five vision modes and the scientific disclaimer.
+7. Add simple lighting controls.
+
+### Tomorrow
+
+8. Complete the results screen and replay flow.
+9. Improve camouflage, camera framing, labels, and responsive layout.
+10. Add simplified desert and grassland variations only if the forest loop is stable.
+11. Run interaction checks and fix blocking bugs.
+12. Run the production build and prepare the demonstration.
+
+### Stretch Goals After the Core Build
+
+13. Create one Blender script and export one GLB model.
+14. Replace a primitive asset with the GLB while retaining the primitive fallback.
+15. Add optional visual polish without changing the core interaction.
 
 ## 11. Testing Checklist
 
-- App starts locally without console errors.
-- Home screen opens the challenge mode.
-- 3D scene renders correctly.
-- Hidden animal can be clicked and detected.
-- Incorrect clicks are counted.
-- Timer starts and stops correctly.
-- Score changes as expected.
-- Results screen receives final game data.
-- Vision modes visibly change scene colors.
-- Grayscale mode preserves brightness contrast.
-- Lighting controls affect the scene.
-- Forest, desert, and grassland scenes load.
-- GLB model paths work after a production build.
-- Learn section includes the scientific disclaimer.
-- UI remains usable on common laptop screen sizes.
+### Demo Acceptance Checklist
+
+- The scene clearly demonstrates constructed 3D geometry, lighting, shadows, and color.
+- Changing the lighting visibly changes scene contrast and animal visibility.
+- Changing the vision mode visibly changes scene color and animal visibility.
+- The camouflaged animal remains clickable so the user can test how easily it can be found under different visual settings.
+- The complete interaction can be demonstrated reliably from start to results.
+
+- Application starts without console errors.
+- Production build completes successfully.
+- Home, Challenge, Results, and Learn screens are reachable.
+- The 3D scene renders and remains correctly framed on a laptop screen.
+- The animal can be found with one click.
+- Background clicks increase the miss count.
+- Timer starts, updates, and stops correctly.
+- Score is calculated correctly and cannot become negative.
+- Replay resets the timer, score, misses, and animal state.
+- All five vision modes visibly change the scene as expected.
+- Lighting controls visibly affect scene contrast.
+- The scientific disclaimer is present.
+- Keyboard focus and buttons remain usable.
+- Desert and grassland are tested only if they are included.
+- No GLB asset is required for the app to run.
 
 ## 12. Main Technical Risks and Simpler Fallback Options
 
-- Risk: Full color vision simulation is scientifically complex.
-  Fallback: Use clearly labeled approximate matrix transforms and explain the limitation.
+- Risk: A scientifically detailed post-processing pipeline takes too long.
+  Fallback: Use approximate matrix transforms or a clearly labeled canvas-level filter.
 
-- Risk: Post-processing shaders take too long to integrate.
-  Fallback: Apply color transforms through simpler material or canvas-level effects for the first version.
+- Risk: Detailed animal modeling consumes the schedule.
+  Fallback: Build a recognizable low-poly animal from grouped primitives.
 
-- Risk: Blender-generated scenes become too detailed or slow.
-  Fallback: Use low-poly primitives, fewer objects, and baked/simple materials.
+- Risk: Blender scripting and GLB export introduce last-minute failures.
+  Fallback: Keep Blender and GLB work as stretch goals and demonstrate the primitive scene.
 
-- Risk: GLB loading introduces path or deployment issues.
-  Fallback: Keep one placeholder React Three Fiber scene available until model loading is stable.
+- Risk: Three unique scenes take too long.
+  Fallback: Deliver the forest scene first, then derive desert and grassland by changing colors, vegetation, lighting, and target placement.
 
-- Risk: Click detection fails on nested GLB meshes.
-  Fallback: Add invisible simplified hitbox meshes around target animals.
+- Risk: Flexible lighting controls create bugs or poor visuals.
+  Fallback: Use three tested lighting presets.
 
-- Risk: Three scenes are too much for the first deadline.
-  Fallback: Complete forest first, then add desert and grassland as simpler variations.
+- Risk: The animal is too difficult to click.
+  Fallback: Use an invisible enlarged hitbox.
 
-- Risk: Lighting controls make the game too easy or too hard.
-  Fallback: Use a few tested lighting presets instead of fully flexible controls.
+- Risk: UI work reduces time available for graphics and interaction.
+  Fallback: Use one compact layout, simple screen-state navigation, and no router.
 
-- Risk: UI scope grows beyond the graphics goal.
-  Fallback: Keep navigation simple and focus effort on the 3D scene, shader modes, and interaction loop.
+- Risk: Optional polish breaks the working demo.
+  Fallback: Stop adding features once the complete loop passes the testing checklist.
