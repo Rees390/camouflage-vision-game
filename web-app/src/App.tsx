@@ -397,6 +397,20 @@ const DESERT_ROCKS: Array<{ position: Position3; scale: Position3; rotation: Pos
   { position: [1.9, 0.18, 1.1], scale: [0.55, 0.36, 0.48], rotation: [-0.1, 0.35, -0.06] },
   { position: [-3.7, 0.2, 2.1], scale: [0.65, 0.42, 0.55], rotation: [0, 0.8, 0.12] },
   { position: [3.25, 0.18, 2.6], scale: [0.6, 0.36, 0.5], rotation: [0.1, -0.4, 0] },
+  { position: [-0.2, 0.22, -6.1], scale: [0.72, 0.46, 0.58], rotation: [0.05, 0.45, -0.08] },
+  { position: [3.2, 0.28, -6.4], scale: [0.88, 0.54, 0.7], rotation: [-0.06, -0.2, 0.08] },
+  { position: [-4.7, 0.16, -0.2], scale: [0.52, 0.34, 0.46], rotation: [0.08, 0.25, 0.05] },
+  { position: [4.8, 0.22, 0.35], scale: [0.74, 0.46, 0.58], rotation: [-0.08, 0.65, -0.04] },
+  { position: [-0.55, 0.15, 2.55], scale: [0.48, 0.3, 0.4], rotation: [0.04, -0.55, 0.08] },
+  { position: [5.5, 0.28, -7], scale: [0.9, 0.58, 0.72], rotation: [0.08, 0.3, -0.05] },
+]
+
+const DESERT_MOUNTAINS: Array<{ position: Position3; scale: Position3; rotationY: number }> = [
+  { position: [-7.8, 1.2, -11.5], scale: [3.6, 2.3, 2.5], rotationY: 0.18 },
+  { position: [-3.7, 0.95, -12.5], scale: [2.7, 1.85, 2.1], rotationY: -0.22 },
+  { position: [0.2, 1.35, -13.2], scale: [4.1, 2.65, 2.8], rotationY: 0.12 },
+  { position: [4.7, 1.05, -12.1], scale: [3.1, 2.05, 2.35], rotationY: -0.16 },
+  { position: [8.2, 1.3, -11.7], scale: [3.8, 2.45, 2.6], rotationY: 0.2 },
 ]
 
 const DESERT_SHRUBS: Position3[] = [
@@ -423,7 +437,9 @@ const GRASS_TUFTS: Position3[] = [
 
 const GRASS_SHRUBS: Position3[] = [
   [-4, 0, -3.1], [4.1, 0, -2.8], [-1.8, 0, -5.5], [1.7, 0, -5.7],
-  [-5, 0, 1.2], [5, 0, 1.1],
+  [-5, 0, 1.2], [5, 0, 1.1], [-3, 0, -1.8], [3.1, 0, -1.55],
+  [-0.8, 0, -3.9], [0.75, 0, -4.35], [-4.7, 0, -5.1], [4.65, 0, -5.25],
+  [-2.25, 0, 1.25], [2.45, 0, 1.4],
 ]
 
 const GRASS_TREES: Array<{ position: Position3; scale: number }> = [
@@ -460,6 +476,19 @@ function DesertModel({ visionMode, onClick }: NightForestModelProps) {
         <sphereGeometry args={[1, 16, 8]} />
         <meshStandardMaterial color={colors.dune} roughness={1} flatShading />
       </mesh>
+      {DESERT_MOUNTAINS.map((mountain, index) => (
+        <mesh
+          key={`mountain-${index}`}
+          castShadow
+          receiveShadow
+          position={mountain.position}
+          rotation={[0, mountain.rotationY, 0]}
+          scale={mountain.scale}
+        >
+          <coneGeometry args={[1, 2.5, 5]} />
+          <meshStandardMaterial color={index % 2 === 0 ? colors.rock : colors.dune} roughness={1} flatShading />
+        </mesh>
+      ))}
       {DESERT_ROCKS.map((rock, index) => (
         <mesh
           key={index}
@@ -541,7 +570,7 @@ function GrasslandModel({ visionMode, onClick }: NightForestModelProps) {
         </group>
       ))}
       {GRASS_SHRUBS.map((position, index) => (
-        <group key={index} position={position}>
+        <group key={index} position={position} rotation={[0, index * 0.63, 0]} scale={0.88 + (index % 4) * 0.08}>
           <mesh castShadow position={[-0.28, 0.38, 0]} scale={[0.62, 0.46, 0.52]}>
             <icosahedronGeometry args={[1, 1]} />
             <meshStandardMaterial color={colors.grassDark} roughness={1} flatShading />
@@ -549,6 +578,10 @@ function GrasslandModel({ visionMode, onClick }: NightForestModelProps) {
           <mesh castShadow position={[0.32, 0.34, 0.05]} scale={[0.56, 0.42, 0.48]}>
             <icosahedronGeometry args={[1, 1]} />
             <meshStandardMaterial color={colors.canopy} roughness={1} flatShading />
+          </mesh>
+          <mesh castShadow position={[0.02, 0.58, -0.08]} scale={[0.48, 0.38, 0.44]}>
+            <icosahedronGeometry args={[1, 1]} />
+            <meshStandardMaterial color={index % 2 === 0 ? colors.canopyLight : colors.grassDark} roughness={1} flatShading />
           </mesh>
         </group>
       ))}
