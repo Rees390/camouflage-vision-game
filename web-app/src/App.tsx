@@ -4,6 +4,8 @@ import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import './App.css'
 
+const ASSET_BASE = import.meta.env.BASE_URL
+
 type Screen = 'home' | 'challenge' | 'results' | 'learn'
 type VisionMode = 'normal' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'grayscale'
 type AnimalId = 'bear' | 'deer'
@@ -219,7 +221,7 @@ type BearModelProps = {
 }
 
 function BearModel({ visionMode, found, position, rotationY, scale, camouflageTint, camouflageBlend, onClick }: BearModelProps) {
-  const gltf = useLoader(GLTFLoader, '/models/forest/sitting_bear.glb')
+  const gltf = useLoader(GLTFLoader, `${ASSET_BASE}models/forest/sitting_bear.glb`)
   const bear = useMemo(() => {
     const clone = gltf.scene.clone(true)
     clone.traverse((object) => {
@@ -280,7 +282,7 @@ type DeerModelProps = {
 }
 
 function DeerModel({ visionMode, found, position, rotationY, scale, camouflageTint, camouflageBlend, onClick }: DeerModelProps) {
-  const gltf = useLoader(GLTFLoader, '/models/forest/wild_deer.glb')
+  const gltf = useLoader(GLTFLoader, `${ASSET_BASE}models/forest/wild_deer.glb`)
   const deer = useMemo(() => {
     const clone = gltf.scene.clone(true)
     clone.traverse((object) => {
@@ -335,7 +337,7 @@ type NightForestModelProps = {
 }
 
 function NightForestModel({ visionMode, onClick }: NightForestModelProps) {
-  const gltf = useLoader(GLTFLoader, '/models/forest/night_forest.glb')
+  const gltf = useLoader(GLTFLoader, `${ASSET_BASE}models/forest/night_forest.glb`)
   const forest = useMemo(() => {
     const clone = gltf.scene.clone(true)
     clone.traverse((object) => {
