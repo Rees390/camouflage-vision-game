@@ -128,6 +128,16 @@ function createRandomRound(sceneId: SceneId, previous?: RoundState): RoundState 
 
 const INITIAL_ROUND = createRandomRound('forest')
 
+const HOME_LAYOUT: RoundLayout = {
+  bear: {
+    position: [2.75, 0, -3.7],
+    rotationY: -0.55,
+    scale: 0.43,
+    coverVariant: 2,
+  },
+  deer: ROUND_LAYOUTS.forest[2].deer,
+}
+
 const SCENE_LABELS: Record<SceneId, string> = {
   forest: 'Night forest',
   desert: 'Desert',
@@ -946,22 +956,29 @@ function App() {
             brightness={1.05}
             lightAngle={35}
             interactive={false}
+            activeAnimals={['bear']}
+            layout={HOME_LAYOUT}
             className="home-scene"
           />
           <div className="home-overlay">
-            <p className="eyebrow">Camouflage vision challenge</p>
-            <h1>Beyond Color</h1>
+            <p className="eyebrow">Interactive computer graphics experiment</p>
+            <h1>
+              Beyond Color
+              <span>Camouflage Vision Challenge</span>
+            </h1>
             <p className="home-intro">
-              Change light and color perception, then test whether camouflage still works.
+              How does color vision affect the search for camouflaged animals? Explore a 3D forest through
+              simulations of different types of color vision deficiency. Change the lighting and see how each
+              viewing condition affects your ability to find wildlife.
             </p>
             <div className="home-actions">
-              <button className="primary-button" type="button" onClick={startChallenge}>Start challenge</button>
-              <button className="secondary-button" type="button" onClick={() => setScreen('learn')}>
-                Explore the science
-              </button>
+              <button className="primary-button" type="button" onClick={startChallenge}>Start exploring</button>
             </div>
+            <p className="home-disclaimer">
+              These viewing modes are approximations designed for exploration, not exact representations of anyone's vision.
+            </p>
           </div>
-          <div className="home-cue" aria-hidden="true">Lighting / Color / Contrast / Detection</div>
+          <div className="home-cue" aria-hidden="true">Look closely: a bear is partly hidden in the forest</div>
         </section>
       )}
 
@@ -986,16 +1003,16 @@ function App() {
               onMiss={() => setMisses((value) => value + 1)}
             />
             <div className="scene-instruction">
-              {round.targetAnimals.length === 1 ? 'Find the hidden animal' : 'Find both hidden animals'}
-              {' - '}{foundAnimals.length}/{round.targetAnimals.length} found
+              {round.targetAnimals.length === 1 ? 'Find and click the hidden animal' : 'Find and click both hidden animals'}
+              <span>{foundAnimals.length}/{round.targetAnimals.length} found</span>
             </div>
           </div>
 
           <aside className="control-panel" aria-label="Vision and lighting controls">
             <div className="panel-heading">
-              <p className="eyebrow">Vision lab</p>
-              <h2>Change what you see</h2>
-              <p>Compare how color and illumination alter the same scene.</p>
+              <p className="eyebrow">Visual experiment</p>
+              <h2>Compare the scene</h2>
+              <p>Change vision mode or lighting, then notice whether the animal becomes easier or harder to spot.</p>
             </div>
             <fieldset>
               <legend>Environment</legend>
@@ -1016,7 +1033,7 @@ function App() {
               </div>
             </fieldset>
             <fieldset>
-              <legend>Color display</legend>
+              <legend>Vision mode</legend>
               <div className="mode-grid">
                 {(Object.keys(VISION_LABELS) as VisionMode[]).map((mode) => (
                   <button
@@ -1046,7 +1063,7 @@ function App() {
                 />
               </label>
               <label className="range-control">
-                <span>Light direction <output>{lightAngle}°</output></span>
+                <span>Light direction <output>{lightAngle}&deg;</output></span>
                 <input
                   type="range"
                   min="-90"
@@ -1058,7 +1075,7 @@ function App() {
               </label>
             </fieldset>
             <div className="science-note">
-              These filters are approximate educational simulations, not diagnostic tools.
+              These viewing modes are approximations designed for exploration, not exact representations of anyone's vision.
             </div>
           </aside>
         </section>

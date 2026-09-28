@@ -87,7 +87,7 @@ button { cursor: pointer; }
 .home-scene { inset: 0; position: absolute; }
 
 .home-screen::after {
-  background: linear-gradient(90deg, rgba(15, 31, 22, 0.82), rgba(15, 31, 22, 0.42) 46%, rgba(15, 31, 22, 0.03) 72%);
+  background: linear-gradient(90deg, rgba(10, 27, 19, 0.9), rgba(10, 27, 19, 0.6) 48%, rgba(10, 27, 19, 0.04) 76%);
   content: '';
   inset: 0;
   pointer-events: none;
@@ -97,7 +97,7 @@ button { cursor: pointer; }
 .home-overlay {
   color: #fff;
   left: clamp(24px, 7vw, 100px);
-  max-width: 610px;
+  max-width: 680px;
   position: absolute;
   top: 48%;
   transform: translateY(-50%);
@@ -121,22 +121,40 @@ button { cursor: pointer; }
 }
 
 .home-overlay h1 {
-  font-size: clamp(56px, 8vw, 104px);
-  line-height: 0.93;
+  font-size: clamp(52px, 6.8vw, 92px);
+  line-height: 0.9;
+  max-width: 650px;
+}
+
+.home-overlay h1 span {
+  display: block;
+  font-size: clamp(18px, 2.1vw, 29px);
+  font-weight: 650;
+  line-height: 1.15;
+  margin-top: 15px;
 }
 
 .home-intro {
-  font-size: clamp(18px, 2.2vw, 26px);
-  line-height: 1.35;
-  margin: 28px 0 0;
-  max-width: 570px;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: clamp(15px, 1.45vw, 19px);
+  line-height: 1.55;
+  margin: 22px 0 0;
+  max-width: 650px;
 }
 
 .home-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 32px;
+  margin-top: 24px;
+}
+
+.home-disclaimer {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  line-height: 1.45;
+  margin: 18px 0 0;
+  max-width: 590px;
 }
 
 .primary-button,
@@ -228,6 +246,12 @@ button { cursor: pointer; }
   position: absolute;
   transform: translateX(-50%);
   white-space: nowrap;
+}
+
+.scene-instruction span {
+  border-left: 1px solid rgba(23, 52, 38, 0.24);
+  margin-left: 10px;
+  padding-left: 10px;
 }
 
 .control-panel {
@@ -544,15 +568,23 @@ input:focus-visible {
     transform: none;
   }
   .home-overlay h1 { font-size: 54px; }
-  .home-intro { font-size: 17px; margin-top: 18px; }
+  .home-overlay h1 span { font-size: 18px; margin-top: 10px; }
+  .home-intro { font-size: 15px; line-height: 1.45; margin-top: 16px; }
   .home-actions { margin-top: 22px; }
+  .home-disclaimer { font-size: 11px; margin-top: 14px; }
   .home-cue { display: none; }
   .challenge-screen { grid-template-rows: 55svh auto; }
   .challenge-hud { left: 8px; right: 8px; top: 8px; }
   .challenge-hud > div { flex: 1; min-width: 0; padding: 8px 6px; }
   .challenge-hud span { font-size: 9px; }
   .challenge-hud strong { font-size: 16px; }
-  .scene-instruction { bottom: 10px; font-size: 12px; }
+  .scene-instruction {
+    bottom: 10px;
+    font-size: 12px;
+    text-align: center;
+    white-space: normal;
+    width: calc(100% - 20px);
+  }
   .control-panel { padding: 24px 18px; }
   .scene-grid { grid-template-columns: 1fr 1fr; }
   .scene-grid button:last-child { grid-column: 1 / -1; }
