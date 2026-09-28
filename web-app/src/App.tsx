@@ -230,7 +230,7 @@ function transformColor(hex: string, mode: VisionMode) {
 
 function CameraRig() {
   const { camera } = useThree()
-  useEffect(() => camera.lookAt(0, 1, 0), [camera])
+  useEffect(() => camera.lookAt(0, 1.3, 0), [camera])
   return null
 }
 
@@ -920,7 +920,7 @@ function SceneCanvas({ className = '', ...sceneProps }: ForestSceneProps & { cla
       <Canvas
         shadows
         dpr={[1, 1.5]}
-        camera={{ position: [0, 5.3, 10], fov: 47, near: 0.1, far: 60 }}
+        camera={{ position: [0, 2.6, 10], fov: 47, near: 0.1, far: 60 }}
         gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
       >
         <ForestScene {...sceneProps} />
