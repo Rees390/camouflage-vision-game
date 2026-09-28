@@ -31,6 +31,8 @@ type GameResult = {
   misses: number
   score: number
   visionMode: VisionMode
+  brightness: number
+  lightAngle: number
   animalsFound: number
   targetAnimals: AnimalId[]
   sceneId: SceneId
@@ -172,7 +174,7 @@ const SCENE_COLORS: Record<
     groundLight: '#765b35',
     directional: '#ffe2a6',
     animalTint: '#9a7141',
-    camouflageBlend: 0.34,
+    camouflageBlend: 0.42,
   },
   grassland: {
     sky: '#789aab',
@@ -191,6 +193,19 @@ const VISION_LABELS: Record<VisionMode, string> = {
   deuteranopia: 'Deuteranopia',
   tritanopia: 'Tritanopia',
   grayscale: 'Grayscale',
+}
+
+function describeResult(result: GameResult) {
+  const visionEffect = result.visionMode === 'normal'
+    ? 'Normal mode preserved the scene\'s original color relationships.'
+    : `${VISION_LABELS[result.visionMode]} remapped color differences between the animal and its surroundings.`
+  const lightEffect = result.brightness < 0.7
+    ? 'Low illumination reduced visible contrast and made shape and shadow more important.'
+    : result.brightness > 1.25
+      ? 'Bright illumination increased surface contrast, while the light direction still changed the animal\'s outline.'
+      : 'Moderate illumination kept color, texture, and directional shadow working together as visual cues.'
+
+  return `${visionEffect} ${lightEffect}`
 }
 
 const VISION_MATRICES: Record<VisionMode, number[]> = {
@@ -697,6 +712,16 @@ function AnimalCover({ animal, placement, sceneId, visionMode, onClick }: Animal
           <dodecahedronGeometry args={[1, 0]} />
           <meshStandardMaterial color={colors.desertRock} roughness={1} flatShading />
         </mesh>
+        <mesh
+          castShadow
+          receiveShadow
+          position={[0.52 * width, 0.38, 0.08]}
+          rotation={[-0.06, -0.38, 0.1]}
+          scale={[0.68 * width, 0.48, 0.48]}
+        >
+          <dodecahedronGeometry args={[1, 0]} />
+          <meshStandardMaterial color={colors.desertRock} roughness={1} flatShading />
+        </mesh>
         <mesh castShadow position={[0.62 * width, 0.45, 0.02]} rotation={[0, 0, -0.3]}>
           <cylinderGeometry args={[0.035, 0.065, 0.9, 5]} />
           <meshStandardMaterial color={colors.desertStem} roughness={1} />
@@ -712,6 +737,18 @@ function AnimalCover({ animal, placement, sceneId, visionMode, onClick }: Animal
             position={[0.55 * width, 0.29 + variant * 0.05, 0.06]}
             rotation={[0.1, -0.35, 0.08]}
             scale={[0.55 * width, 0.38 + variant * 0.05, 0.42]}
+          >
+            <dodecahedronGeometry args={[1, 0]} />
+            <meshStandardMaterial color={colors.desertRock} roughness={1} flatShading />
+          </mesh>
+        )}
+        {variant === 2 && (
+          <mesh
+            castShadow
+            receiveShadow
+            position={[-0.62 * width, 0.28, 0.12]}
+            rotation={[0.08, 0.28, -0.05]}
+            scale={[0.46 * width, 0.34, 0.38]}
           >
             <dodecahedronGeometry args={[1, 0]} />
             <meshStandardMaterial color={colors.desertRock} roughness={1} flatShading />
@@ -930,6 +967,20 @@ function App() {
     setScreen('challenge')
   }
 
+  const replaySameConditions = () => {
+    if (!result) return
+    startedAt.current = Date.now()
+    setSceneId(result.sceneId)
+    setVisionMode(result.visionMode)
+    setBrightness(result.brightness)
+    setLightAngle(result.lightAngle)
+    setElapsed(0)
+    setMisses(0)
+    setFoundAnimals([])
+    setResult(null)
+    setScreen('challenge')
+  }
+
   const handleSceneSelect = (event: ReactMouseEvent<HTMLButtonElement>) => {
     const nextSceneId = event.currentTarget.dataset.scene as SceneId
     if (nextSceneId === sceneId) return
@@ -955,6 +1006,8 @@ function App() {
       misses,
       score: finalScore,
       visionMode,
+      brightness,
+      lightAngle,
       animalsFound: nextFoundAnimals.length,
       targetAnimals: round.targetAnimals,
       sceneId,
@@ -1023,6 +1076,12 @@ function App() {
               <div><span>Misses</span><strong>{misses}</strong></div>
               <div><span>Found</span><strong>{foundAnimals.length}/{round.targetAnimals.length}</strong></div>
               <div><span>Live score</span><strong>{Math.max(0, 1000 - elapsed * 12 - misses * 60)}</strong></div>
+            </div>
+            <div className="condition-readout" aria-live="polite">
+              <span>Current conditions</span>
+              <strong>
+                {SCENE_LABELS[sceneId]} / {VISION_LABELS[visionMode]} / {Math.round(brightness * 100)}% light
+              </strong>
             </div>
             <SceneCanvas
               sceneId={sceneId}
@@ -1128,18 +1187,18 @@ function App() {
               <div><span>Vision</span><strong>{VISION_LABELS[result.visionMode]}</strong></div>
             </div>
             <p className="result-insight">
-              Changes in hue, luminance, and shadow can separate an animal from its background or make its outline harder to detect.
+              {describeResult(result)}
             </p>
             <div className="home-actions">
-              <button className="primary-button" type="button" onClick={startChallenge}>Try again</button>
-              <button className="secondary-button" type="button" onClick={() => setScreen('learn')}>Learn why</button>
+              <button className="primary-button" type="button" onClick={replaySameConditions}>Replay same conditions</button>
+              <button className="secondary-button" type="button" onClick={startChallenge}>New random challenge</button>
             </div>
           </div>
           <SceneCanvas
             sceneId={result.sceneId}
             visionMode={result.visionMode}
-            brightness={brightness}
-            lightAngle={lightAngle}
+            brightness={result.brightness}
+            lightAngle={result.lightAngle}
             interactive={false}
             foundAnimals={result.targetAnimals}
             activeAnimals={result.targetAnimals}

@@ -235,6 +235,27 @@ button { cursor: pointer; }
 
 .challenge-hud strong { font-size: 19px; }
 
+.condition-readout {
+  background: rgba(244, 246, 241, 0.93);
+  color: var(--forest-dark);
+  display: grid;
+  gap: 2px;
+  padding: 9px 12px;
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  z-index: 5;
+}
+
+.condition-readout span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.condition-readout strong { font-size: 12px; }
+
 .scene-instruction {
   background: rgba(255, 255, 255, 0.92);
   bottom: 18px;
@@ -578,6 +599,11 @@ input:focus-visible {
   .challenge-hud > div { flex: 1; min-width: 0; padding: 8px 6px; }
   .challenge-hud span { font-size: 9px; }
   .challenge-hud strong { font-size: 16px; }
+  .condition-readout {
+    left: 8px;
+    right: auto;
+    top: 74px;
+  }
   .scene-instruction {
     bottom: 10px;
     font-size: 12px;
