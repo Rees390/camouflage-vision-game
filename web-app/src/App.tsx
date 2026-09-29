@@ -55,6 +55,31 @@ const ROUND_LAYOUTS: Record<SceneId, RoundLayout[]> = {
       deer: { position: [-3.8, 0, -2.65], rotationY: 0.18, scale: 0.42 },
       fox: { position: [3.5, 0, -1.8], rotationY: -0.5, scale: 0.62 },
     },
+    {
+      bear: { position: [-4, 0, -0.45], rotationY: 0.5, scale: 0.43 },
+      deer: { position: [0.95, 0, -2.75], rotationY: -0.24, scale: 0.42 },
+      fox: { position: [-3.2, 0, -2.2], rotationY: 0.3, scale: 0.63 },
+    },
+    {
+      bear: { position: [0.45, 0, -4.95], rotationY: -0.18, scale: 0.44 },
+      deer: { position: [3.95, 0, -1.25], rotationY: -0.58, scale: 0.41 },
+      fox: { position: [2.6, 0, -4.4], rotationY: -0.34, scale: 0.62 },
+    },
+    {
+      bear: { position: [-1, 0, -2.25], rotationY: 0.2, scale: 0.42 },
+      deer: { position: [4.05, 0, -4.75], rotationY: -0.46, scale: 0.42 },
+      fox: { position: [-0.8, 0, -3.7], rotationY: 0.16, scale: 0.64 },
+    },
+    {
+      bear: { position: [1.8, 0, -1.45], rotationY: -0.4, scale: 0.44 },
+      deer: { position: [-4, 0, -4.7], rotationY: 0.34, scale: 0.41 },
+      fox: { position: [3.8, 0, -3], rotationY: -0.5, scale: 0.63 },
+    },
+    {
+      bear: { position: [-3.85, 0, -3.85], rotationY: 0.38, scale: 0.43 },
+      deer: { position: [0.25, 0, -5.35], rotationY: -0.16, scale: 0.42 },
+      fox: { position: [-2, 0, -4.8], rotationY: 0.28, scale: 0.62 },
+    },
   ],
   desert: [
     {
@@ -72,6 +97,31 @@ const ROUND_LAYOUTS: Record<SceneId, RoundLayout[]> = {
       deer: { position: [-2.85, 0, -4.35], rotationY: 0.28, scale: 0.41 },
       fox: { position: [-2.45, 0, -4.55], rotationY: 0.3, scale: 0.62 },
     },
+    {
+      bear: { position: [-3.8, 0, -1], rotationY: 0.36, scale: 0.43 },
+      deer: { position: [3.8, 0, -4], rotationY: -0.4, scale: 0.42 },
+      fox: { position: [0.4, 0, -2.7], rotationY: -0.18, scale: 0.64 },
+    },
+    {
+      bear: { position: [3.8, 0, -1.4], rotationY: -0.48, scale: 0.43 },
+      deer: { position: [-3.7, 0, -4.8], rotationY: 0.3, scale: 0.41 },
+      fox: { position: [4, 0, -1.2], rotationY: -0.56, scale: 0.63 },
+    },
+    {
+      bear: { position: [-1.2, 0, -3.5], rotationY: 0.16, scale: 0.42 },
+      deer: { position: [2.1, 0, -2.2], rotationY: -0.3, scale: 0.42 },
+      fox: { position: [-4, 0, -4.9], rotationY: 0.4, scale: 0.62 },
+    },
+    {
+      bear: { position: [1.7, 0, -5], rotationY: -0.24, scale: 0.42 },
+      deer: { position: [-1.8, 0, -1.5], rotationY: 0.2, scale: 0.42 },
+      fox: { position: [1.5, 0, -5], rotationY: -0.26, scale: 0.63 },
+    },
+    {
+      bear: { position: [-3.9, 0, -3.1], rotationY: 0.42, scale: 0.43 },
+      deer: { position: [3.9, 0, -2], rotationY: -0.44, scale: 0.41 },
+      fox: { position: [-0.9, 0, -1.2], rotationY: 0.12, scale: 0.64 },
+    },
   ],
   grassland: [
     {
@@ -88,6 +138,31 @@ const ROUND_LAYOUTS: Record<SceneId, RoundLayout[]> = {
       bear: { position: [-2.5, 0, -4.5], rotationY: 0.35, scale: 0.42 },
       deer: { position: [2.65, 0, -4.45], rotationY: -0.42, scale: 0.41 },
       fox: { position: [-2.35, 0, -4.35], rotationY: 0.32, scale: 0.62 },
+    },
+    {
+      bear: { position: [0.65, 0, -2.5], rotationY: -0.18, scale: 0.43 },
+      deer: { position: [-4, 0, -1.4], rotationY: 0.34, scale: 0.42 },
+      fox: { position: [0.8, 0, -2.8], rotationY: -0.2, scale: 0.63 },
+    },
+    {
+      bear: { position: [4, 0, -4.7], rotationY: -0.46, scale: 0.42 },
+      deer: { position: [-0.7, 0, -2], rotationY: 0.18, scale: 0.42 },
+      fox: { position: [3.5, 0, -4.5], rotationY: -0.42, scale: 0.62 },
+    },
+    {
+      bear: { position: [-4, 0, -4.9], rotationY: 0.4, scale: 0.42 },
+      deer: { position: [1.1, 0, -1.45], rotationY: -0.22, scale: 0.42 },
+      fox: { position: [-3.6, 0, -4.6], rotationY: 0.36, scale: 0.62 },
+    },
+    {
+      bear: { position: [2, 0, -1.7], rotationY: -0.34, scale: 0.44 },
+      deer: { position: [-1.2, 0, -5], rotationY: 0.2, scale: 0.41 },
+      fox: { position: [2.2, 0, -2], rotationY: -0.3, scale: 0.64 },
+    },
+    {
+      bear: { position: [-1.4, 0, -3.2], rotationY: 0.22, scale: 0.43 },
+      deer: { position: [4, 0, -1.1], rotationY: -0.5, scale: 0.42 },
+      fox: { position: [-1.8, 0, -3.5], rotationY: 0.24, scale: 0.63 },
     },
   ],
 }
