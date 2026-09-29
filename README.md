@@ -36,6 +36,12 @@ The same controls work in the desert and grassland. This example uses the desert
 
 ![Desert scene using the protanopia mode and reduced lighting](docs/screenshots/desert-comparison.png)
 
+### Grassland Environment
+
+The grassland uses a lower, eye-level camera with layered shrubs, grass tufts, trees, and rolling terrain. Green and brown forms overlap across the scene, so the player must use movement-free cues such as silhouette, texture, and shadow to separate an animal from vegetation.
+
+![Grassland challenge with a deer partly hidden among shrubs and grass](docs/screenshots/grassland.png)
+
 ## How to Play
 
 1. Select **Start exploring**.
@@ -60,6 +66,20 @@ Each round contains either one or two animals. Their locations, rotations, scale
 | Light direction | Moves the directional light and changes cast-shadow placement. |
 
 The color modes are implemented as RGB matrix transformations applied to scene and model materials. Lighting remains active after a color transform, allowing color and illumination to be compared together.
+
+## How the Vision Modes Affect the Scenes
+
+Color vision deficiency affects the ability to distinguish particular color combinations; it does not simply make every scene less colorful. The exact experience varies between people, so the descriptions below explain the intended effect of this project's approximate display transforms rather than claiming to reproduce anyone's vision exactly.
+
+| Mode | General color effect | Effect in this project |
+| --- | --- | --- |
+| Normal | Preserves the original RGB relationships used by the scene materials. | Provides the baseline for comparing animal fur, vegetation, rocks, sky, and shadows. |
+| Protanopia | Red-green distinctions are strongly reduced. Reds may also provide less useful separation from dark or green surroundings. | Warm brown fur can move closer to dark green forest foliage and brown terrain. In the desert, the animal and warm rocks may become harder to separate by hue alone. |
+| Deuteranopia | Green-red distinctions are strongly reduced, although its color remapping differs from protanopia. | Green shrubs, grass, tree canopies, and brown animals can become more similar. Shape, brightness, and occlusion become more important in the forest and grassland. |
+| Tritanopia | Blue-green, purple-red, and yellow-pink distinctions are reduced, and colors may appear less bright. | The relationship between blue sky, green vegetation, and yellow-brown terrain changes. This can alter background separation in all three scenes, especially the cool night forest and warm desert. |
+| Grayscale | Removes hue from the educational display. This is not a representation of typical red-green or blue-yellow deficiency. | The player must rely entirely on luminance, texture, silhouette, lighting, and cast shadows to find the animal. |
+
+The [National Eye Institute's guide to types of color vision deficiency](https://www.nei.nih.gov/eye-health-information/eye-conditions-and-diseases/color-blindness/types-color-vision-deficiency) explains that protanopia and deuteranopia affect red-green discrimination, while tritanopia affects several blue-green, purple-red, and yellow-pink distinctions. The [NHS overview](https://www.nhs.uk/conditions/colour-vision-deficiency/) also emphasizes that color vision deficiency generally means difficulty distinguishing colors rather than seeing no color at all.
 
 ## Environments and Models
 
