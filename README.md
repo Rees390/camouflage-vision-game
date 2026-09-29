@@ -71,7 +71,9 @@ Forest and grassland rounds contain either a bear, a deer, or both. Desert round
 | Brightness | Changes the intensity of the scene lighting. |
 | Light direction | Moves the directional light and changes cast-shadow placement. |
 
-The color modes are implemented as RGB matrix transformations applied to scene and model materials. Lighting remains active after a color transform, allowing color and illumination to be compared together.
+The color modes are implemented as fixed 3 x 3 RGB matrix transformations applied to scene and model materials. For an input color vector `c = [R, G, B]`, the application computes `c' = clamp(Mc, 0, 1)`. Normal mode uses the identity matrix, while grayscale uses the luminance weights `0.299R + 0.587G + 0.114B` for every output channel. Lighting remains active after the material colors are transformed, allowing color and illumination to be compared together.
+
+The protanopia, deuteranopia, and tritanopia matrices are intentionally lightweight display approximations. They operate directly on RGB material values rather than modeling individual cone responses, adaptation, display calibration, or severity. More advanced color-vision simulation research includes Brettel, Vienot, and Mollon's [dichromat simulation in LMS color space](https://doi.org/10.1364/JOSAA.14.002647) and Machado, Oliveira, and Fernandes's [physiologically based model](https://doi.org/10.1109/TVCG.2009.113). These papers provide scientific context; this project does not claim to implement either complete model.
 
 ## How the Vision Modes Affect the Scenes
 
@@ -192,7 +194,19 @@ The web application currently loads:
 
 ## Deployment
 
-Pushing to the `main` branch triggers `.github/workflows/deploy-pages.yml`. The workflow installs dependencies with `npm ci`, creates a production build, uploads `web-app/dist`, and deploys it to GitHub Pages.
+Pushing to the `main` branch triggers `.github/workflows/deploy-pages.yml`. The workflow installs dependencies with `npm ci`, runs the automated game-logic tests and ESLint checks, creates a production build, uploads `web-app/dist`, and deploys it to GitHub Pages.
+
+## Automated Checks
+
+Run the complete local verification sequence from `web-app/`:
+
+```bash
+npm test
+npm run lint
+npm run build
+```
+
+The Node test suite verifies the score formula, its zero-point floor, desert target selection, and the possible forest and grassland target combinations. These pure game rules use an injected random source in tests so every branch can be checked deterministically.
 
 ## Scientific Disclaimer
 

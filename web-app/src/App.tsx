@@ -3,6 +3,7 @@ import { Suspense, useEffect, useMemo, useRef, useState, type MouseEvent as Reac
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import './App.css'
+import { calculateScore, chooseTargetAnimals } from './gameLogic'
 
 const ASSET_BASE = import.meta.env.BASE_URL
 
@@ -202,7 +203,7 @@ function createRandomRound(sceneId: SceneId, previous?: RoundState): RoundState 
         ...ROUND_LAYOUTS.desert[0],
         fox: randomizePlacement(foxSpot, 'fox'),
       },
-      targetAnimals: ['fox'],
+      targetAnimals: chooseTargetAnimals(sceneId),
     }
   }
 
@@ -219,10 +220,7 @@ function createRandomRound(sceneId: SceneId, previous?: RoundState): RoundState 
   )
   const deerPool = deerChoices.length ? deerChoices : spots.filter((spot) => spot !== bearSpot)
   const deerSpot = deerPool[Math.floor(Math.random() * deerPool.length)]
-  const oneAnimalRound = Math.random() < 0.45
-  const targetAnimals: AnimalId[] = oneAnimalRound
-    ? [Math.random() < 0.5 ? 'bear' : 'deer']
-    : ['bear', 'deer']
+  const targetAnimals: AnimalId[] = chooseTargetAnimals(sceneId)
 
   return {
     layout: {
@@ -1486,7 +1484,7 @@ function App() {
     setFoundAnimals(nextFoundAnimals)
     if (nextFoundAnimals.length < round.targetAnimals.length) return
 
-    const finalScore = Math.max(0, 1000 - elapsed * 12 - misses * 60)
+    const finalScore = calculateScore(elapsed, misses)
     setResult({
       elapsed,
       misses,
