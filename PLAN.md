@@ -6,11 +6,11 @@ Build a small university Computer Graphics web application that demonstrates how
 
 The central computer graphics goal is to make these effects directly observable: changing the lighting or color display must visibly alter the scene and the visibility of the camouflaged animal. Scene construction, lighting, shadows, and color are the core graphics elements of the project. Clicking the animal provides an interactive way to test how those visual changes affect the user's ability to find it.
 
-The project must be ready for demonstration by tomorrow night. The priority is a complete, stable educational experience rather than detailed models or a large amount of content. The simulation is educational and approximate, not medical or diagnostic.
+The project must be ready for demonstration by the end of september. The priority is a complete, stable educational experience rather than detailed models or a large amount of content. The simulation is educational and approximate, not medical or diagnostic.
 
 ## 2. Minimum Viable Version
 
-The required one-day version includes:
+The required version includes:
 
 - A simple home screen with a start button and access to the Learn section.
 - One playable low-poly forest scene built directly with React Three Fiber primitives.
