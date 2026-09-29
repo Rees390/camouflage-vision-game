@@ -361,6 +361,32 @@ type NightForestModelProps = {
   onClick: (event: ThreeEvent<MouseEvent>) => void
 }
 
+const FOREST_EXTRA_TREES: Array<{ position: Position3; scale: number }> = [
+  { position: [-7.2, 0, -7.1], scale: 1.05 }, { position: [-5.7, 0, -9.5], scale: 0.92 },
+  { position: [-4.1, 0, -7.8], scale: 1.12 }, { position: [-2.3, 0, -10.4], scale: 0.86 },
+  { position: [-0.2, 0, -8.8], scale: 1.05 }, { position: [2.1, 0, -10.2], scale: 0.9 },
+  { position: [4.15, 0, -8.1], scale: 1.14 }, { position: [5.9, 0, -10], scale: 0.88 },
+  { position: [7.25, 0, -7.2], scale: 1.02 }, { position: [-6.8, 0, -12.2], scale: 0.78 },
+  { position: [-1, 0, -12.6], scale: 0.82 }, { position: [6.55, 0, -12.1], scale: 0.76 },
+]
+
+const FOREST_EXTRA_SHRUBS: Position3[] = [
+  [-5.4, 0, -3.2], [-4.2, 0, -5.4], [-2.8, 0, -2.2], [-1.35, 0, -5.8],
+  [0.2, 0, -3.8], [1.65, 0, -6.1], [2.75, 0, -2.4], [4.1, 0, -5.5],
+  [5.3, 0, -3], [-4.8, 0, 0.4], [4.7, 0, 0.55], [0.3, 0, 1.5],
+]
+
+const FOREST_EXTRA_ROCKS: Array<{ position: Position3; scale: Position3 }> = [
+  { position: [-5.8, 0.22, -4.4], scale: [0.72, 0.45, 0.58] },
+  { position: [-3.2, 0.18, -6.4], scale: [0.55, 0.36, 0.46] },
+  { position: [-1.7, 0.15, -2.7], scale: [0.44, 0.3, 0.38] },
+  { position: [1.2, 0.2, -5.1], scale: [0.62, 0.4, 0.5] },
+  { position: [3.4, 0.16, -6.5], scale: [0.5, 0.32, 0.42] },
+  { position: [5.7, 0.24, -4], scale: [0.76, 0.48, 0.62] },
+  { position: [-3.9, 0.14, 1], scale: [0.42, 0.28, 0.36] },
+  { position: [3.6, 0.15, 1.2], scale: [0.48, 0.3, 0.4] },
+]
+
 function NightForestModel({ visionMode, onClick }: NightForestModelProps) {
   const gltf = useLoader(GLTFLoader, `${ASSET_BASE}models/forest/night_forest.glb`)
   const forest = useMemo(() => {
@@ -398,7 +424,58 @@ function NightForestModel({ visionMode, onClick }: NightForestModelProps) {
     })
   }, [forest, visionMode])
 
-  return <primitive object={forest} onClick={onClick} />
+  const colors = useMemo(
+    () => ({
+      trunk: transformColor('#241b16', visionMode),
+      needles: transformColor('#10291f', visionMode),
+      needlesLight: transformColor('#173629', visionMode),
+      shrub: transformColor('#183b29', visionMode),
+      rock: transformColor('#26312e', visionMode),
+    }),
+    [visionMode],
+  )
+
+  return (
+    <group onClick={onClick}>
+      <primitive object={forest} />
+      {FOREST_EXTRA_TREES.map((tree, index) => (
+        <group key={`forest-tree-${index}`} position={tree.position} scale={tree.scale}>
+          <mesh castShadow position={[0, 1.65, 0]}>
+            <cylinderGeometry args={[0.2, 0.32, 3.3, 7]} />
+            <meshStandardMaterial color={colors.trunk} roughness={1} flatShading />
+          </mesh>
+          {[1.75, 2.55, 3.3].map((height, layer) => (
+            <mesh key={height} castShadow position={[0, height, 0]}>
+              <coneGeometry args={[1.25 - layer * 0.18, 1.75, 7]} />
+              <meshStandardMaterial
+                color={layer % 2 === 0 ? colors.needles : colors.needlesLight}
+                roughness={1}
+                flatShading
+              />
+            </mesh>
+          ))}
+        </group>
+      ))}
+      {FOREST_EXTRA_SHRUBS.map((position, index) => (
+        <group key={`forest-shrub-${index}`} position={position} rotation={[0, index * 0.71, 0]}>
+          <mesh castShadow position={[-0.28, 0.34, 0]} scale={[0.62, 0.42, 0.5]}>
+            <icosahedronGeometry args={[1, 1]} />
+            <meshStandardMaterial color={colors.shrub} roughness={1} flatShading />
+          </mesh>
+          <mesh castShadow position={[0.3, 0.3, 0.05]} scale={[0.56, 0.38, 0.46]}>
+            <icosahedronGeometry args={[1, 1]} />
+            <meshStandardMaterial color={colors.needlesLight} roughness={1} flatShading />
+          </mesh>
+        </group>
+      ))}
+      {FOREST_EXTRA_ROCKS.map((rock, index) => (
+        <mesh key={`forest-rock-${index}`} castShadow receiveShadow position={rock.position} scale={rock.scale}>
+          <dodecahedronGeometry args={[1, 0]} />
+          <meshStandardMaterial color={colors.rock} roughness={1} flatShading />
+        </mesh>
+      ))}
+    </group>
+  )
 }
 
 const DESERT_ROCKS: Array<{ position: Position3; scale: Position3; rotation: Position3 }> = [
@@ -418,6 +495,14 @@ const DESERT_ROCKS: Array<{ position: Position3; scale: Position3; rotation: Pos
   { position: [4.8, 0.22, 0.35], scale: [0.74, 0.46, 0.58], rotation: [-0.08, 0.65, -0.04] },
   { position: [-0.55, 0.15, 2.55], scale: [0.48, 0.3, 0.4], rotation: [0.04, -0.55, 0.08] },
   { position: [5.5, 0.28, -7], scale: [0.9, 0.58, 0.72], rotation: [0.08, 0.3, -0.05] },
+  { position: [-6.15, 0.2, -1.35], scale: [0.64, 0.4, 0.52], rotation: [0.04, 0.45, -0.06] },
+  { position: [6.1, 0.23, -2.6], scale: [0.7, 0.46, 0.56], rotation: [-0.06, -0.25, 0.05] },
+  { position: [-3, 0.17, -3.8], scale: [0.5, 0.34, 0.42], rotation: [0.08, 0.7, 0.04] },
+  { position: [2.8, 0.15, -0.35], scale: [0.46, 0.3, 0.4], rotation: [-0.04, 0.3, -0.08] },
+  { position: [-1.1, 0.13, -1.2], scale: [0.4, 0.26, 0.34], rotation: [0.05, -0.5, 0.06] },
+  { position: [0.65, 0.18, -5.15], scale: [0.58, 0.36, 0.46], rotation: [-0.08, 0.55, -0.03] },
+  { position: [-5.7, 0.16, 1.8], scale: [0.48, 0.31, 0.4], rotation: [0.06, 0.2, 0.08] },
+  { position: [5.65, 0.18, 2.1], scale: [0.56, 0.35, 0.44], rotation: [-0.05, -0.45, 0.04] },
 ]
 
 const DESERT_MOUNTAINS: Array<{ position: Position3; scale: Position3; rotationY: number }> = [
@@ -439,6 +524,14 @@ const DESERT_SHRUBS: Position3[] = [
   [2.7, 0, -5.55],
   [-4.8, 0, 1.1],
   [4.7, 0, 1.5],
+  [-5.8, 0, -1.9],
+  [5.75, 0, -2.15],
+  [-3.9, 0, -6.25],
+  [4.15, 0, -6.4],
+  [-0.35, 0, -5.8],
+  [0.6, 0, -0.45],
+  [-2.7, 0, 2.4],
+  [2.55, 0, 2.65],
 ]
 
 const GRASS_TUFTS: Position3[] = [
@@ -448,6 +541,9 @@ const GRASS_TUFTS: Position3[] = [
   [-5.2, 0, -4.5], [-3.2, 0, -4.8], [-1.4, 0, -5.2], [0.8, 0, -5.4],
   [2.1, 0, -4.6], [4.2, 0, -4.3], [-5.1, 0, 0.4], [-2.7, 0, 0.8],
   [0.3, 0, 0.7], [2.2, 0, 0.5], [4.8, 0, 0.2], [0, 0, 3.1],
+  [-5.7, 0, -1.1], [-4.1, 0, -1.45], [-3.6, 0, 2.05], [-2.1, 0, -0.3],
+  [-0.9, 0, -1.7], [0.9, 0, -1.4], [1.8, 0, 1.5], [3.3, 0, 1.1],
+  [4.1, 0, -4.9], [5.55, 0, -3.5], [-0.2, 0, -6.2], [5.65, 0, 2.8],
 ]
 
 const GRASS_SHRUBS: Position3[] = [
@@ -455,6 +551,9 @@ const GRASS_SHRUBS: Position3[] = [
   [-5, 0, 1.2], [5, 0, 1.1], [-3, 0, -1.8], [3.1, 0, -1.55],
   [-0.8, 0, -3.9], [0.75, 0, -4.35], [-4.7, 0, -5.1], [4.65, 0, -5.25],
   [-2.25, 0, 1.25], [2.45, 0, 1.4],
+  [-5.65, 0, -2.2], [5.7, 0, -2.05], [-4.35, 0, -0.15], [4.3, 0, 0.05],
+  [-3.55, 0, -6.2], [3.65, 0, -6.05], [-1.3, 0, -2.15], [1.4, 0, -2.35],
+  [-0.15, 0, 1.65], [0.2, 0, -6.35],
 ]
 
 const GRASS_TREES: Array<{ position: Position3; scale: number }> = [
@@ -464,6 +563,12 @@ const GRASS_TREES: Array<{ position: Position3; scale: number }> = [
   { position: [3.45, 0, -6.7], scale: 0.78 },
   { position: [-6.1, 0, 0.4], scale: 0.72 },
   { position: [6.15, 0, 0.2], scale: 0.68 },
+  { position: [-4.4, 0, -8.9], scale: 0.7 },
+  { position: [-1.45, 0, -8.3], scale: 0.76 },
+  { position: [1.25, 0, -8.7], scale: 0.72 },
+  { position: [4.65, 0, -8.5], scale: 0.74 },
+  { position: [-6.4, 0, -2.7], scale: 0.66 },
+  { position: [6.45, 0, -2.5], scale: 0.64 },
 ]
 
 function DesertModel({ visionMode, onClick }: NightForestModelProps) {
