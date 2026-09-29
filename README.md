@@ -26,19 +26,19 @@ The main computer graphics topics demonstrated are:
 
 ### Forest Experiment
 
-The night forest combines trees, foliage, rocks, shadows, and foreground cover to break up the animals' silhouettes. The interface shows the active environment, vision mode, and brightness while the player searches.
+The night forest combines a layered wall of tall dark trees, dense midground bushes, rocks, shadows, and foreground cover to break up the animals' silhouettes. The interface shows the active environment, vision mode, and brightness while the player searches.
 
 ![Forest challenge with vision and lighting controls](docs/screenshots/forest-experiment.png)
 
 ### Comparing Conditions
 
-The same controls work in the desert and grassland. This example uses the desert scene with the protanopia approximation and reduced brightness. Rocks hide much of the deer while leaving a recognizable, clickable silhouette.
+The same controls work in the desert and grassland. The desert now contains a crowded field of varied low-poly rocks, larger background formations, dunes, dry shrubs, and distant mountains. Animals use the same reduced game scale as the other environments and blend with the warm terrain.
 
-![Desert scene using the protanopia mode and reduced lighting](docs/screenshots/desert-comparison.png)
+![Desert challenge with dense rocks, distant formations, and lighting controls](docs/screenshots/desert-comparison.png)
 
 ### Grassland Environment
 
-The grassland uses a lower, eye-level camera with layered shrubs, grass tufts, trees, and rolling terrain. Green and brown forms overlap across the scene, so the player must use movement-free cues such as silhouette, texture, and shadow to separate an animal from vegetation.
+The grassland uses a lower, eye-level camera with layered shrubs, grass tufts, rolling terrain, and a dense three-row background tree line. Green and brown forms overlap across the scene, so the player must use movement-free cues such as silhouette, texture, and shadow to separate an animal from vegetation.
 
 ![Grassland challenge with a deer partly hidden among shrubs and grass](docs/screenshots/grassland.png)
 
@@ -51,7 +51,7 @@ The grassland uses a lower, eye-level camera with layered shrubs, grass tufts, t
 5. Avoid background clicks because every miss reduces the score.
 6. Review the result explanation, replay the same conditions, or generate a new randomized challenge.
 
-Each round contains either one or two animals. Their locations, rotations, scale, and nearby cover vary between rounds so positions cannot simply be memorized.
+Each round contains either one or two animals. Their locations, rotations, and nearby cover vary between rounds so positions cannot simply be memorized. The animals use a deliberately reduced display scale so the surrounding geometry provides a meaningful camouflage challenge.
 
 ## Vision and Lighting Controls
 
@@ -85,15 +85,15 @@ The [National Eye Institute's guide to types of color vision deficiency](https:/
 
 ### Night Forest
 
-The primary environment is a Blender-authored low-poly night forest. Dense trees, shrubs, logs, rocks, and dark directional shadows produce the strongest camouflage challenge.
+The primary environment is a Blender-authored low-poly night forest extended at runtime with taller background trunks and a dense band of tall, three-part bushes. Trees, shrubs, logs, rocks, and dark directional shadows produce the strongest camouflage challenge.
 
 ### Desert
 
-The desert uses procedural low-poly dunes, rocks, dry shrubs, and a distant mountain line. Scene-specific rock cover and warmer animal tones reduce separation between wildlife and terrain.
+The desert uses procedural low-poly dunes, more than sixty foreground and midground rocks, sixteen large background formations, dry shrubs, and a distant mountain line. Scene-specific rock cover and warmer animal tones reduce separation between wildlife and terrain.
 
 ### Grassland
 
-The grassland uses hills, trees, grass tufts, and layered shrub clusters. Vegetation is positioned across the foreground and animal hiding areas to create natural occlusion.
+The grassland uses hills, grass tufts, layered shrub clusters, and forty-eight trees in its distant tree line in addition to nearer trees. Vegetation is positioned across the foreground and animal hiding areas to create natural occlusion.
 
 The sitting brown bear and adult doe were generated in Blender using reproducible Python scripts. Their materials are cloned at runtime so color transforms and camouflage tinting can be applied without changing the exported GLB files.
 

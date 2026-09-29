@@ -392,6 +392,16 @@ const FOREST_EXTRA_SHRUBS: Position3[] = [
   [5.3, 0, -3], [-4.8, 0, 0.4], [4.7, 0, 0.55], [0.3, 0, 1.5],
 ]
 
+const FOREST_MIDGROUND_SHRUBS: Position3[] = Array.from({ length: 30 }, (_, index) => {
+  const row = Math.floor(index / 10)
+  const column = index % 10
+  return [
+    -6.1 + column * 1.35 + (row % 2) * 0.52,
+    0,
+    0.65 - row * 2.15 - (column % 3) * 0.28,
+  ]
+})
+
 const FOREST_EXTRA_ROCKS: Array<{ position: Position3; scale: Position3 }> = [
   { position: [-5.8, 0.22, -4.4], scale: [0.72, 0.45, 0.58] },
   { position: [-3.2, 0.18, -6.4], scale: [0.55, 0.36, 0.46] },
@@ -459,11 +469,11 @@ function NightForestModel({ visionMode, onClick }: NightForestModelProps) {
       <primitive object={forest} />
       {FOREST_BACKGROUND_TREES.map((tree, index) => (
         <group key={`forest-background-tree-${index}`} position={tree.position} scale={tree.scale}>
-          <mesh castShadow position={[0, 1.9, 0]}>
-            <cylinderGeometry args={[0.2, 0.34, 3.8, 7]} />
+          <mesh castShadow position={[0, 2.7, 0]}>
+            <cylinderGeometry args={[0.2, 0.36, 5.4, 7]} />
             <meshStandardMaterial color={colors.backgroundTrunk} roughness={1} flatShading />
           </mesh>
-          {[1.75, 2.5, 3.2, 3.85].map((height, layer) => (
+          {[3, 3.85, 4.65, 5.4].map((height, layer) => (
             <mesh key={height} castShadow position={[0, height, 0]}>
               <coneGeometry args={[1.35 - layer * 0.16, 1.7, 7]} />
               <meshStandardMaterial
@@ -493,15 +503,19 @@ function NightForestModel({ visionMode, onClick }: NightForestModelProps) {
           ))}
         </group>
       ))}
-      {FOREST_EXTRA_SHRUBS.map((position, index) => (
+      {[...FOREST_MIDGROUND_SHRUBS, ...FOREST_EXTRA_SHRUBS].map((position, index) => (
         <group key={`forest-shrub-${index}`} position={position} rotation={[0, index * 0.71, 0]}>
-          <mesh castShadow position={[-0.28, 0.34, 0]} scale={[0.62, 0.42, 0.5]}>
+          <mesh castShadow position={[-0.28, 0.5, 0]} scale={[0.62, 0.6, 0.5]}>
             <icosahedronGeometry args={[1, 1]} />
             <meshStandardMaterial color={colors.shrub} roughness={1} flatShading />
           </mesh>
-          <mesh castShadow position={[0.3, 0.3, 0.05]} scale={[0.56, 0.38, 0.46]}>
+          <mesh castShadow position={[0.3, 0.46, 0.05]} scale={[0.56, 0.54, 0.46]}>
             <icosahedronGeometry args={[1, 1]} />
             <meshStandardMaterial color={colors.needlesLight} roughness={1} flatShading />
+          </mesh>
+          <mesh castShadow position={[0.02, 0.9, -0.03]} scale={[0.4, 0.46, 0.4]}>
+            <icosahedronGeometry args={[1, 1]} />
+            <meshStandardMaterial color={index % 2 === 0 ? colors.shrub : colors.needles} roughness={1} flatShading />
           </mesh>
         </group>
       ))}
@@ -557,16 +571,44 @@ const DESERT_BACKGROUND_FORMATIONS: Array<{
 }> = Array.from({ length: 16 }, (_, index) => ({
   position: [
     -8.2 + index * 1.08,
-    0.45 + (index % 4) * 0.1,
+    0.8 + (index % 4) * 0.18,
     -8.4 - (index % 3) * 0.65,
   ],
   scale: [
-    0.85 + (index % 3) * 0.26,
-    0.58 + (index % 4) * 0.16,
-    0.7 + (index % 2) * 0.22,
+    1.35 + (index % 3) * 0.38,
+    1.05 + (index % 4) * 0.24,
+    1.05 + (index % 2) * 0.34,
   ],
   rotationY: (index % 5) * 0.24,
 }))
+
+const DESERT_SCATTERED_ROCKS: Array<{
+  position: Position3
+  scale: Position3
+  rotation: Position3
+}> = Array.from({ length: 42 }, (_, index) => {
+  const row = Math.floor(index / 14)
+  const column = index % 14
+  const height = 0.22 + ((column * 2 + row) % 5) * 0.055
+
+  return {
+    position: [
+      -7.15 + column * 1.1 + (row % 2) * 0.48,
+      height * 0.78,
+      2.7 - row * 3.15 - (column % 3) * 0.34,
+    ],
+    scale: [
+      0.34 + ((column + row * 2) % 5) * 0.09,
+      height,
+      0.3 + ((column * 3 + row) % 4) * 0.08,
+    ],
+    rotation: [
+      ((column + row) % 3 - 1) * 0.08,
+      (column * 0.47 + row * 0.31) % Math.PI,
+      ((column * 2 + row) % 3 - 1) * 0.07,
+    ],
+  }
+})
 
 const DESERT_SHRUBS: Position3[] = [
   [-3.1, 0, -0.7],
@@ -630,15 +672,19 @@ const GRASS_TREES: Array<{ position: Position3; scale: number }> = [
 ]
 
 const GRASS_BACKGROUND_TREES: Array<{ position: Position3; scale: number }> = Array.from(
-  { length: 20 },
-  (_, index) => ({
-    position: [
-      -8.5 + (index % 10) * 1.9 + Math.floor(index / 10) * 0.75,
-      0,
-      -9.2 - Math.floor(index / 10) * 2.4 - (index % 3) * 0.28,
-    ],
-    scale: 0.58 + (index % 4) * 0.08,
-  }),
+  { length: 48 },
+  (_, index) => {
+    const row = Math.floor(index / 16)
+    const column = index % 16
+    return {
+      position: [
+        -9.3 + column * 1.25 + (row % 2) * 0.62,
+        0,
+        -8.4 - row * 2.25 - (column % 4) * 0.18,
+      ],
+      scale: 0.58 + ((column * 2 + row) % 5) * 0.07 - row * 0.025,
+    }
+  },
 )
 
 const GRASS_BACKGROUND_SHRUBS: Position3[] = [
@@ -654,6 +700,7 @@ function DesertModel({ visionMode, onClick }: NightForestModelProps) {
       ground: transformColor('#a88453', visionMode),
       dune: transformColor('#b79460', visionMode),
       rock: transformColor('#68513d', visionMode),
+      rockLight: transformColor('#806344', visionMode),
       shrub: transformColor('#55452d', visionMode),
     }),
     [visionMode],
@@ -710,6 +757,23 @@ function DesertModel({ visionMode, onClick }: NightForestModelProps) {
         >
           <dodecahedronGeometry args={[1, 0]} />
           <meshStandardMaterial color={colors.rock} roughness={0.96} flatShading />
+        </mesh>
+      ))}
+      {DESERT_SCATTERED_ROCKS.map((rock, index) => (
+        <mesh
+          key={`desert-scattered-rock-${index}`}
+          castShadow
+          receiveShadow
+          position={rock.position}
+          rotation={rock.rotation}
+          scale={rock.scale}
+        >
+          <dodecahedronGeometry args={[1, 0]} />
+          <meshStandardMaterial
+            color={index % 4 === 0 ? colors.rockLight : colors.rock}
+            roughness={1}
+            flatShading
+          />
         </mesh>
       ))}
       {DESERT_SHRUBS.map((position, index) => (
@@ -1023,6 +1087,15 @@ function ForestScene({
     Math.sin(lightRadians) * 7,
   ]
   const roundComplete = foundAnimals.length === activeAnimals.length
+  const animalScaleMultiplier = 0.78
+  const bearPlacement = {
+    ...layout.bear,
+    scale: layout.bear.scale * animalScaleMultiplier,
+  }
+  const deerPlacement = {
+    ...layout.deer,
+    scale: layout.deer.scale * animalScaleMultiplier,
+  }
   const handleAnimalClick = (animal: AnimalId) => (event: ThreeEvent<MouseEvent>) => {
     event.stopPropagation()
     if (interactive && !foundAnimals.includes(animal)) onFound?.(animal)
@@ -1067,9 +1140,9 @@ function ForestScene({
             <BearModel
               visionMode={visionMode}
               found={foundAnimals.includes('bear')}
-              position={layout.bear.position}
-              rotationY={layout.bear.rotationY}
-              scale={layout.bear.scale}
+              position={bearPlacement.position}
+              rotationY={bearPlacement.rotationY}
+              scale={bearPlacement.scale}
               camouflageTint={sceneColors.animalTint}
               camouflageBlend={sceneColors.camouflageBlend}
               onClick={handleAnimalClick('bear')}
@@ -1088,9 +1161,9 @@ function ForestScene({
             <DeerModel
               visionMode={visionMode}
               found={foundAnimals.includes('deer')}
-              position={layout.deer.position}
-              rotationY={layout.deer.rotationY}
-              scale={layout.deer.scale}
+              position={deerPlacement.position}
+              rotationY={deerPlacement.rotationY}
+              scale={deerPlacement.scale}
               camouflageTint={sceneColors.animalTint}
               camouflageBlend={sceneColors.camouflageBlend}
               onClick={handleAnimalClick('deer')}
