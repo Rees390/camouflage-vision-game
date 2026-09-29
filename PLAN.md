@@ -113,8 +113,6 @@ The results screen should show final score, completion time, incorrect clicks, s
 
 ## 10. Development Phases in the Correct Order
 
-### Today
-
 1. Commit the untouched Vite application as a baseline.
 2. Install only Three.js, React Three Fiber, and any required TypeScript typings.
 3. Replace the Vite demo with the basic Home, Challenge, Results, and Learn screen flow.
@@ -122,9 +120,6 @@ The results screen should show final score, completion time, incorrect clicks, s
 5. Add one hidden animal, click detection, misses, timer, and scoring.
 6. Add the five vision modes and the scientific disclaimer.
 7. Add simple lighting controls.
-
-### Tomorrow
-
 8. Complete the results screen and replay flow.
 9. Improve camouflage, camera framing, labels, and responsive layout.
 10. Add simplified desert and grassland variations only if the forest loop is stable.
