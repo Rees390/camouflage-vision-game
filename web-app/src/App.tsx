@@ -505,15 +505,15 @@ function NightForestModel({ visionMode, onClick }: NightForestModelProps) {
       ))}
       {[...FOREST_MIDGROUND_SHRUBS, ...FOREST_EXTRA_SHRUBS].map((position, index) => (
         <group key={`forest-shrub-${index}`} position={position} rotation={[0, index * 0.71, 0]}>
-          <mesh castShadow position={[-0.28, 0.5, 0]} scale={[0.62, 0.6, 0.5]}>
+          <mesh castShadow position={[-0.28, 0.44, 0]} scale={[0.62, 0.52, 0.5]}>
             <icosahedronGeometry args={[1, 1]} />
             <meshStandardMaterial color={colors.shrub} roughness={1} flatShading />
           </mesh>
-          <mesh castShadow position={[0.3, 0.46, 0.05]} scale={[0.56, 0.54, 0.46]}>
+          <mesh castShadow position={[0.3, 0.41, 0.05]} scale={[0.56, 0.47, 0.46]}>
             <icosahedronGeometry args={[1, 1]} />
             <meshStandardMaterial color={colors.needlesLight} roughness={1} flatShading />
           </mesh>
-          <mesh castShadow position={[0.02, 0.9, -0.03]} scale={[0.4, 0.46, 0.4]}>
+          <mesh castShadow position={[0.02, 0.76, -0.03]} scale={[0.4, 0.35, 0.4]}>
             <icosahedronGeometry args={[1, 1]} />
             <meshStandardMaterial color={index % 2 === 0 ? colors.shrub : colors.needles} roughness={1} flatShading />
           </mesh>
@@ -936,8 +936,8 @@ function AnimalCover({ animal, placement, sceneId, visionMode, onClick }: Animal
             key={offset}
             castShadow
             receiveShadow
-            position={[offset * width, 0.45 + (index % 2) * 0.08, index === 1 ? 0.08 : 0]}
-            scale={[0.65 * width, 0.55, 0.48]}
+            position={[offset * width, 0.39 + (index % 2) * 0.06, index === 1 ? 0.08 : 0]}
+            scale={[0.65 * width, 0.46, 0.48]}
           >
             <icosahedronGeometry args={[1, 1]} />
             <meshStandardMaterial
@@ -948,7 +948,7 @@ function AnimalCover({ animal, placement, sceneId, visionMode, onClick }: Animal
           </mesh>
         ))}
         {variant === 2 && (
-          <mesh castShadow position={[0.18 * width, 0.78, 0.04]} scale={[0.7 * width, 0.5, 0.46]}>
+          <mesh castShadow position={[0.18 * width, 0.67, 0.04]} scale={[0.7 * width, 0.42, 0.46]}>
             <icosahedronGeometry args={[1, 1]} />
             <meshStandardMaterial color={colors.forestB} roughness={1} flatShading />
           </mesh>
