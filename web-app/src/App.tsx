@@ -8,7 +8,7 @@ const ASSET_BASE = import.meta.env.BASE_URL
 
 type Screen = 'home' | 'challenge' | 'results' | 'learn'
 type VisionMode = 'normal' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'grayscale'
-type AnimalId = 'bear' | 'deer'
+type AnimalId = 'bear' | 'deer' | 'fox'
 type SceneId = 'forest' | 'desert' | 'grassland'
 type Position3 = [number, number, number]
 
@@ -43,42 +43,51 @@ const ROUND_LAYOUTS: Record<SceneId, RoundLayout[]> = {
     {
       bear: { position: [3.75, 0, -0.25], rotationY: -0.45, scale: 0.44 },
       deer: { position: [-3.45, 0, -1.7], rotationY: -0.12, scale: 0.43 },
+      fox: { position: [2.9, 0, -2.8], rotationY: -0.4, scale: 0.63 },
     },
     {
       bear: { position: [-2.35, 0, -4.15], rotationY: 0.32, scale: 0.45 },
       deer: { position: [2.85, 0, -4.2], rotationY: -0.62, scale: 0.44 },
+      fox: { position: [-2.75, 0, -3.65], rotationY: 0.35, scale: 0.64 },
     },
     {
       bear: { position: [2.75, 0, -3.7], rotationY: -0.55, scale: 0.43 },
       deer: { position: [-3.8, 0, -2.65], rotationY: 0.18, scale: 0.42 },
+      fox: { position: [3.5, 0, -1.8], rotationY: -0.5, scale: 0.62 },
     },
   ],
   desert: [
     {
       bear: { position: [3.85, 0, -2.25], rotationY: -0.5, scale: 0.43 },
       deer: { position: [-4.05, 0, -3.25], rotationY: 0.22, scale: 0.42 },
+      fox: { position: [-3.7, 0, -2.7], rotationY: 0.24, scale: 0.64 },
     },
     {
       bear: { position: [-3.65, 0, -2.1], rotationY: 0.38, scale: 0.44 },
       deer: { position: [3.45, 0, -3.15], rotationY: -0.52, scale: 0.42 },
+      fox: { position: [3.25, 0, -3.3], rotationY: -0.48, scale: 0.63 },
     },
     {
       bear: { position: [2.55, 0, -4.6], rotationY: -0.35, scale: 0.42 },
       deer: { position: [-2.85, 0, -4.35], rotationY: 0.28, scale: 0.41 },
+      fox: { position: [-2.45, 0, -4.55], rotationY: 0.3, scale: 0.62 },
     },
   ],
   grassland: [
     {
       bear: { position: [-3.4, 0, -2.3], rotationY: 0.3, scale: 0.44 },
       deer: { position: [3.25, 0, -3.2], rotationY: -0.48, scale: 0.42 },
+      fox: { position: [-3.1, 0, -2.9], rotationY: 0.26, scale: 0.63 },
     },
     {
       bear: { position: [3.5, 0, -2.5], rotationY: -0.4, scale: 0.43 },
       deer: { position: [-3.15, 0, -3.55], rotationY: 0.2, scale: 0.42 },
+      fox: { position: [3.2, 0, -3.25], rotationY: -0.42, scale: 0.63 },
     },
     {
       bear: { position: [-2.5, 0, -4.5], rotationY: 0.35, scale: 0.42 },
       deer: { position: [2.65, 0, -4.45], rotationY: -0.42, scale: 0.41 },
+      fox: { position: [-2.35, 0, -4.35], rotationY: 0.32, scale: 0.62 },
     },
   ],
 }
@@ -95,12 +104,33 @@ function randomizePlacement(placement: AnimalPlacement, animal: AnimalId): Anima
       placement.position[2] + (Math.random() - 0.5) * 0.7,
     ],
     rotationY: placement.rotationY + (Math.random() - 0.5) * 0.45,
-    scale: animal === 'bear' ? 0.42 + Math.random() * 0.035 : 0.4 + Math.random() * 0.03,
+    scale: animal === 'bear'
+      ? 0.42 + Math.random() * 0.035
+      : animal === 'deer'
+        ? 0.4 + Math.random() * 0.03
+        : 0.62 + Math.random() * 0.04,
     coverVariant: Math.floor(Math.random() * 3),
   }
 }
 
 function createRandomRound(sceneId: SceneId, previous?: RoundState): RoundState {
+  if (sceneId === 'desert') {
+    const foxSpots = ROUND_LAYOUTS.desert.map((layout) => layout.fox)
+    const previousFox = previous?.layout.fox.position
+    const foxChoices = previousFox
+      ? foxSpots.filter((spot) => distanceBetween(spot.position, previousFox) > 1.2)
+      : foxSpots
+    const foxSpot = foxChoices[Math.floor(Math.random() * foxChoices.length)]
+
+    return {
+      layout: {
+        ...ROUND_LAYOUTS.desert[0],
+        fox: randomizePlacement(foxSpot, 'fox'),
+      },
+      targetAnimals: ['fox'],
+    }
+  }
+
   const spots = ROUND_LAYOUTS[sceneId].flatMap((layout) => [layout.bear, layout.deer])
   const previousBear = previous?.layout.bear.position
   const bearChoices = previousBear
@@ -123,6 +153,7 @@ function createRandomRound(sceneId: SceneId, previous?: RoundState): RoundState 
     layout: {
       bear: randomizePlacement(bearSpot, 'bear'),
       deer: randomizePlacement(deerSpot, 'deer'),
+      fox: ROUND_LAYOUTS[sceneId][0].fox,
     },
     targetAnimals,
   }
@@ -138,6 +169,7 @@ const HOME_LAYOUT: RoundLayout = {
     coverVariant: 2,
   },
   deer: ROUND_LAYOUTS.forest[2].deer,
+  fox: ROUND_LAYOUTS.desert[0].fox,
 }
 
 const SCENE_LABELS: Record<SceneId, string> = {
@@ -195,17 +227,50 @@ const VISION_LABELS: Record<VisionMode, string> = {
   grayscale: 'Grayscale',
 }
 
-function describeResult(result: GameResult) {
-  const visionEffect = result.visionMode === 'normal'
-    ? 'Normal mode preserved the scene\'s original color relationships.'
-    : `${VISION_LABELS[result.visionMode]} remapped color differences between the animal and its surroundings.`
-  const lightEffect = result.brightness < 0.7
-    ? 'Low illumination reduced visible contrast and made shape and shadow more important.'
-    : result.brightness > 1.25
-      ? 'Bright illumination increased surface contrast, while the light direction still changed the animal\'s outline.'
-      : 'Moderate illumination kept color, texture, and directional shadow working together as visual cues.'
+const VISION_RESULT_EFFECTS: Record<VisionMode, string> = {
+  normal: 'Normal mode preserved the original color relationships as a baseline for comparison.',
+  protanopia: 'In this protanopia approximation, red-green differences are compressed and red contributes less separation between surfaces.',
+  deuteranopia: 'In this deuteranopia approximation, green-red differences are compressed, making those hues less reliable as separate signals.',
+  tritanopia: 'In this tritanopia approximation, blue-yellow relationships are remapped, changing how cool and warm surfaces separate.',
+  grayscale: 'Grayscale removed hue information entirely, leaving luminance, edges, texture, and shape as the available visual signals.',
+}
 
-  return `${visionEffect} ${lightEffect}`
+const SCENE_RESULT_EFFECTS: Record<VisionMode, Record<SceneId, string>> = {
+  normal: {
+    forest: 'The bear or deer retained its natural brown contrast against the dark green foliage, although shadows and bushes still interrupted its outline.',
+    desert: 'The pale fennec retained subtle color differences from the ochre rocks and sand, while its ears and narrow outline remained the strongest clues.',
+    grassland: 'The brown animal remained distinguishable from green vegetation through a combination of hue, brightness, and silhouette.',
+  },
+  protanopia: {
+    forest: 'Brown fur, tree trunks, and dark foliage moved closer together, so the animal depended more on edge contrast and recognizable anatomy.',
+    desert: 'The fennec, sand, and warm brown rocks shared more similar color cues, making its large ears, narrow muzzle, and cast shadow more useful.',
+    grassland: 'Brown fur and green-yellow vegetation became less distinct by hue, increasing the importance of texture breaks and the animal\'s outline.',
+  },
+  deuteranopia: {
+    forest: 'Green foliage and brown fur became less separated by color, so overlapping bushes could conceal more of the animal\'s form.',
+    desert: 'The fox and rocky terrain remained close in warm luminance, while the reduced green-red distinction offered little extra help in separating them.',
+    grassland: 'Grass, shrubs, and brown fur moved toward similar muted tones, making body shape, ears, legs, and shadow stronger search cues.',
+  },
+  tritanopia: {
+    forest: 'The cool blue-green night palette shifted, altering the contrast between sky, foliage, lit surfaces, and the animal\'s warm fur.',
+    desert: 'The blue sky and yellow-tan terrain changed relationship, while the fox still blended closely with rocks of similar brightness.',
+    grassland: 'Blue sky, yellow grass, and green foliage were remapped, changing background separation around the animal without removing shape cues.',
+  },
+  grayscale: {
+    forest: 'The animal and foliage could only be separated by brightness, texture, silhouette, and the direction of shadows.',
+    desert: 'The similarly bright fox, sand, and rocks lost their hue differences, leaving its ears, muzzle, tail, and outline as the main clues.',
+    grassland: 'Vegetation and fur were reduced to overlapping light and dark values, so contour and local contrast carried the search.',
+  },
+}
+
+function describeResult(result: GameResult) {
+  const lightEffect = result.brightness < 0.7
+    ? 'At low brightness, reduced contrast made those remaining shape and shadow cues harder to detect.'
+    : result.brightness > 1.25
+      ? 'At high brightness, stronger highlights and cast shadows increased local contrast, although the light direction could still merge parts of the outline into nearby cover.'
+      : 'At moderate brightness, color, texture, silhouette, and directional shadow all remained available as combined cues.'
+
+  return `${VISION_RESULT_EFFECTS[result.visionMode]} ${SCENE_RESULT_EFFECTS[result.visionMode][result.sceneId]} ${lightEffect}`
 }
 
 const VISION_MATRICES: Record<VisionMode, number[]> = {
@@ -349,6 +414,58 @@ function DeerModel({ visionMode, found, position, rotationY, scale, camouflageTi
     <group position={position} rotation={[0, rotationY, 0]} scale={scale} onClick={onClick}>
       <primitive object={deer} />
       <mesh position={[0.35, 2.05, 0]} scale={[4.4, 4.25, 1.75]}>
+        <boxGeometry />
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+      </mesh>
+    </group>
+  )
+}
+
+type FoxModelProps = DeerModelProps
+
+function FoxModel({ visionMode, found, position, rotationY, scale, camouflageTint, camouflageBlend, onClick }: FoxModelProps) {
+  const gltf = useLoader(GLTFLoader, `${ASSET_BASE}models/desert/fennec_fox.glb`)
+  const fox = useMemo(() => {
+    const clone = gltf.scene.clone(true)
+    clone.traverse((object) => {
+      if (!(object instanceof THREE.Mesh)) return
+      object.castShadow = true
+      object.receiveShadow = true
+
+      const cloneMaterial = (material: THREE.Material) => {
+        const copy = material.clone()
+        if (copy instanceof THREE.MeshStandardMaterial) {
+          copy.userData.baseColor = copy.color.clone()
+        }
+        return copy
+      }
+
+      object.material = Array.isArray(object.material)
+        ? object.material.map(cloneMaterial)
+        : cloneMaterial(object.material)
+    })
+    return clone
+  }, [gltf.scene])
+
+  useEffect(() => {
+    fox.traverse((object) => {
+      if (!(object instanceof THREE.Mesh)) return
+      const materials = Array.isArray(object.material) ? object.material : [object.material]
+      materials.forEach((material) => {
+        if (!(material instanceof THREE.MeshStandardMaterial)) return
+        const baseColor = material.userData.baseColor as THREE.Color
+        const adjusted = transformColor(`#${baseColor.getHexString()}`, visionMode)
+        adjusted.lerp(transformColor(camouflageTint, visionMode), camouflageBlend)
+        material.color.copy(found ? adjusted.lerp(new THREE.Color('#d6a437'), 0.55) : adjusted)
+        material.needsUpdate = true
+      })
+    })
+  }, [fox, camouflageBlend, camouflageTint, found, visionMode])
+
+  return (
+    <group position={position} rotation={[0, rotationY, 0]} scale={scale} onClick={onClick}>
+      <primitive object={fox} />
+      <mesh position={[-0.2, 1.3, 0]} scale={[5, 2.8, 1.45]}>
         <boxGeometry />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
@@ -893,7 +1010,7 @@ type AnimalCoverProps = {
 
 function AnimalCover({ animal, placement, sceneId, visionMode, onClick }: AnimalCoverProps) {
   const [x, , z] = placement.position
-  const width = animal === 'bear' ? 1 : 0.82
+  const width = animal === 'bear' ? 1 : animal === 'deer' ? 0.82 : 0.68
   const colors = useMemo(
     () => ({
       forestA: transformColor('#183b29', visionMode),
@@ -959,14 +1076,15 @@ function AnimalCover({ animal, placement, sceneId, visionMode, onClick }: Animal
 
   if (sceneId === 'desert') {
     const variant = placement.coverVariant ?? 0
+    const height = animal === 'fox' ? 0.68 : 1
     return (
       <group position={[x, 0, z + 0.68]} onClick={onClick}>
         <mesh
           castShadow
           receiveShadow
-          position={[-0.18 * width, 0.46, 0]}
+          position={[-0.18 * width, 0.46 * height, 0]}
           rotation={[0.08, 0.5, -0.08]}
-          scale={[0.95 * width, 0.64, 0.56]}
+          scale={[0.95 * width, 0.64 * height, 0.56]}
         >
           <dodecahedronGeometry args={[1, 0]} />
           <meshStandardMaterial color={colors.desertRock} roughness={1} flatShading />
@@ -974,9 +1092,9 @@ function AnimalCover({ animal, placement, sceneId, visionMode, onClick }: Animal
         <mesh
           castShadow
           receiveShadow
-          position={[0.52 * width, 0.38, 0.08]}
+          position={[0.52 * width, 0.38 * height, 0.08]}
           rotation={[-0.06, -0.38, 0.1]}
-          scale={[0.68 * width, 0.48, 0.48]}
+          scale={[0.68 * width, 0.48 * height, 0.48]}
         >
           <dodecahedronGeometry args={[1, 0]} />
           <meshStandardMaterial color={colors.desertRock} roughness={1} flatShading />
@@ -993,9 +1111,9 @@ function AnimalCover({ animal, placement, sceneId, visionMode, onClick }: Animal
           <mesh
             castShadow
             receiveShadow
-            position={[0.55 * width, 0.29 + variant * 0.05, 0.06]}
+            position={[0.55 * width, (0.29 + variant * 0.05) * height, 0.06]}
             rotation={[0.1, -0.35, 0.08]}
-            scale={[0.55 * width, 0.38 + variant * 0.05, 0.42]}
+            scale={[0.55 * width, (0.38 + variant * 0.05) * height, 0.42]}
           >
             <dodecahedronGeometry args={[1, 0]} />
             <meshStandardMaterial color={colors.desertRock} roughness={1} flatShading />
@@ -1096,6 +1214,10 @@ function ForestScene({
     ...layout.deer,
     scale: layout.deer.scale * animalScaleMultiplier,
   }
+  const foxPlacement = {
+    ...layout.fox,
+    scale: layout.fox.scale * animalScaleMultiplier,
+  }
   const handleAnimalClick = (animal: AnimalId) => (event: ThreeEvent<MouseEvent>) => {
     event.stopPropagation()
     if (interactive && !foundAnimals.includes(animal)) onFound?.(animal)
@@ -1171,6 +1293,27 @@ function ForestScene({
             <AnimalCover
               animal="deer"
               placement={layout.deer}
+              sceneId={sceneId}
+              visionMode={visionMode}
+              onClick={handleMiss}
+            />
+          </>
+        )}
+        {activeAnimals.includes('fox') && (
+          <>
+            <FoxModel
+              visionMode={visionMode}
+              found={foundAnimals.includes('fox')}
+              position={foxPlacement.position}
+              rotationY={foxPlacement.rotationY}
+              scale={foxPlacement.scale}
+              camouflageTint={sceneColors.animalTint}
+              camouflageBlend={sceneColors.camouflageBlend}
+              onClick={handleAnimalClick('fox')}
+            />
+            <AnimalCover
+              animal="fox"
+              placement={layout.fox}
               sceneId={sceneId}
               visionMode={visionMode}
               onClick={handleMiss}

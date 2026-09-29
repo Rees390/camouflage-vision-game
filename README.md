@@ -8,7 +8,7 @@ An interactive computer graphics project that explores how color perception, lig
 
 ## Project Overview
 
-How does color vision affect the search for camouflaged animals? Beyond Color places the player in interactive 3D environments containing a hidden bear, deer, or both. The player can change the simulated viewing condition, light brightness, and light direction before trying to find the animals.
+How does color vision affect the search for camouflaged animals? Beyond Color places the player in interactive 3D environments containing a hidden bear, deer, or fennec fox. The player can change the simulated viewing condition, light brightness, and light direction before trying to find the animals.
 
 The project is designed around a simple visual experiment: keep the scene and animal placement fixed while changing color or illumination. This makes it possible to observe how the same camouflage can become more or less noticeable as visual conditions change.
 
@@ -32,7 +32,7 @@ The night forest combines a layered wall of tall dark trees, dense midground bus
 
 ### Comparing Conditions
 
-The same controls work in the desert and grassland. The desert now contains a crowded field of varied low-poly rocks, larger background formations, dunes, dry shrubs, and distant mountains. Animals use the same reduced game scale as the other environments and blend with the warm terrain.
+The same controls work in the desert and grassland. The desert contains a crowded field of varied low-poly rocks, larger background formations, dunes, dry shrubs, and distant mountains. Its pale fennec fox blends with the warm terrain while its large ears preserve a recognizable silhouette.
 
 ![Desert challenge with dense rocks, distant formations, and lighting controls](docs/screenshots/desert-comparison.png)
 
@@ -41,6 +41,12 @@ The same controls work in the desert and grassland. The desert now contains a cr
 The grassland uses a lower, eye-level camera with layered shrubs, grass tufts, rolling terrain, and a dense three-row background tree line. Green and brown forms overlap across the scene, so the player must use movement-free cues such as silhouette, texture, and shadow to separate an animal from vegetation.
 
 ![Grassland challenge with a deer partly hidden among shrubs and grass](docs/screenshots/grassland.png)
+
+### Results and Interpretation
+
+After the target is found, the results screen connects the selected vision mode to the chosen environment. The explanation identifies the affected color relationships, the animal and background surfaces that became more similar, the remaining visual cues, and the effect of the selected brightness.
+
+![Desert result explaining the protanopia approximation and useful camouflage cues](docs/screenshots/results-protanopia.png)
 
 ## How to Play
 
@@ -51,7 +57,7 @@ The grassland uses a lower, eye-level camera with layered shrubs, grass tufts, r
 5. Avoid background clicks because every miss reduces the score.
 6. Review the result explanation, replay the same conditions, or generate a new randomized challenge.
 
-Each round contains either one or two animals. Their locations, rotations, and nearby cover vary between rounds so positions cannot simply be memorized. The animals use a deliberately reduced display scale so the surrounding geometry provides a meaningful camouflage challenge.
+Forest and grassland rounds contain either a bear, a deer, or both. Desert rounds contain one fennec fox. Locations, rotations, and nearby cover vary between rounds so positions cannot simply be memorized. The animals use a deliberately reduced display scale so the surrounding geometry provides a meaningful camouflage challenge.
 
 ## Vision and Lighting Controls
 
@@ -89,13 +95,15 @@ The primary environment is a Blender-authored low-poly night forest extended at 
 
 ### Desert
 
-The desert uses procedural low-poly dunes, more than sixty foreground and midground rocks, sixteen large background formations, dry shrubs, and a distant mountain line. Scene-specific rock cover and warmer animal tones reduce separation between wildlife and terrain.
+The desert uses procedural low-poly dunes, more than sixty foreground and midground rocks, sixteen large background formations, dry shrubs, and a distant mountain line. Its animal is a Blender-authored low-poly fennec fox with sandy fur, a lean body, oversized ears, a pointed muzzle, and a bushy tail. Scene-specific rock cover and similar warm tones reduce separation between the fox and terrain.
+
+![Low-poly fennec fox model from a three-quarter view](assets/blender/previews/fennec_fox_three_quarter.png)
 
 ### Grassland
 
 The grassland uses hills, grass tufts, layered shrub clusters, and forty-eight trees in its distant tree line in addition to nearer trees. Vegetation is positioned across the foreground and animal hiding areas to create natural occlusion.
 
-The sitting brown bear and adult doe were generated in Blender using reproducible Python scripts. Their materials are cloned at runtime so color transforms and camouflage tinting can be applied without changing the exported GLB files.
+The sitting brown bear, adult doe, and fennec fox were generated in Blender using reproducible Python scripts. Their materials are cloned at runtime so color transforms and camouflage tinting can be applied without changing the exported GLB files.
 
 ## Scoring
 
@@ -105,7 +113,7 @@ Every round begins with 1,000 points:
 score = max(0, 1000 - elapsed_seconds * 12 - misses * 60)
 ```
 
-The results screen reports time, misses, animals found, environment, vision mode, and a short explanation of how the selected visual conditions affected the available cues.
+The results screen reports time, misses, animals found, environment, and vision mode. It also gives a mode-and-environment-specific explanation of which color relationships changed and whether hue, luminance, silhouette, texture, or shadow became more important under the selected brightness.
 
 ## Technology
 
@@ -127,6 +135,7 @@ camouflage-vision-game/
   scripts/blender/          Reproducible model and scene generators
   web-app/
     public/models/forest/   Runtime GLB assets
+    public/models/desert/   Fennec fox GLB asset
     src/App.tsx             Scene rendering, game state, and UI
     src/App.css             Responsive interface styling
   PLAN.md                   Original project plan and acceptance checklist
@@ -170,14 +179,16 @@ Reproducible Blender scripts are stored in `scripts/blender/`:
 - `create_night_forest.py`
 - `create_sitting_bear.py`
 - `create_wild_deer.py`
+- `create_fennec_fox.py`
 
-The corresponding `.blend` source files and reference renders are stored in `assets/blender/`. Exported runtime models are stored in `web-app/public/models/forest/`.
+The corresponding `.blend` source files and reference renders are stored in `assets/blender/`. Exported runtime models are stored in the environment folders under `web-app/public/models/`.
 
 The web application currently loads:
 
 - `night_forest.glb`
 - `sitting_bear.glb`
 - `wild_deer.glb`
+- `fennec_fox.glb`
 
 ## Deployment
 
